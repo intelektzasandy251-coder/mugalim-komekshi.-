@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Google login popup fix for Android: 2026-08-31 -->
 <html lang="kk">
 <head>
   <meta charset="utf-8" />
@@ -624,9 +625,7 @@ $('googleLoginBtn').addEventListener('click',async()=>{
   try{
     const provider=new firebase.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
-    const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if(isMobile && firebase.signInWithRedirect) await firebase.signInWithRedirect(auth,provider);
-    else await firebase.signInWithPopup(auth,provider);
+    await firebase.signInWithPopup(auth,provider);
   }catch(e){ toast(e.message||'Google аккаунтымен кіру мүмкін болмады'); }
 });
 
