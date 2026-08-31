@@ -439,6 +439,13 @@ body::before{
   background:#fff !important;
 }
 
+
+#googleLoginBtn:disabled{
+  opacity:.72 !important;
+  cursor:wait !important;
+  transform:none !important;
+}
+
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -797,9 +804,18 @@ body::before{
     </main>
   </div>
 
-  <script src="firebase-config.js"></script>
 <script>
-const firebaseConfig = window.firebaseConfig || {};
+const firebaseConfig = {
+  apiKey: "AIzaSyCHwZ3xqprR_eDwlYmGLA5VSKYqAwIgHW4",
+  authDomain: "ustaz-ai-32848.firebaseapp.com",
+  projectId: "ustaz-ai-32848",
+  storageBucket: "ustaz-ai-32848.firebasestorage.app",
+  messagingSenderId: "650635015603",
+  appId: "1:650635015603:web:3143a4784a508d4bb587c6"
+};
+
+window.USTAZ_AI_OWNER_EMAIL = "kalibekovna21@gmail.com";
+window.USTAZ_AI_APPCHECK_SITE_KEY = window.USTAZ_AI_APPCHECK_SITE_KEY || "";
 
 const SCHOOL = '№19 орта мектеп-гимназия';
 const AUTHOR = 'Салтанат Қалибекқызы';
@@ -808,7 +824,7 @@ const $ = (id) => document.getElementById(id);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
 let auth = null, db = null, firebase = null, aiImageModel = null, appCheckReady = false;
-let cloudEnabled = !Object.values(firebaseConfig).some(v => String(v).includes('YOUR_'));
+let cloudEnabled = Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId);
 let currentUser = null;
 let currentProfile = null;
 let currentPlan = null;
@@ -852,7 +868,13 @@ async function initFirebase(){
     const aiMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-ai.js');
     const appCheckMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js');
     const app=appMod.initializeApp(firebaseConfig);
-    auth=authMod.getAuth(app); db=fsMod.getFirestore(app);
+    auth=authMod.getAuth(app);
+    try{
+      await authMod.setPersistence(auth,authMod.browserLocalPersistence);
+    }catch(persistenceErr){
+      console.warn('Auth persistence init failed',persistenceErr);
+    }
+    db=fsMod.getFirestore(app);
     firebase={...authMod,...fsMod,...aiMod,...appCheckMod};
 
     try{
@@ -882,6 +904,7 @@ async function initFirebase(){
       aiImageModel=null;
     }
     authMod.onAuthStateChanged(auth, async user=>{ if(user){currentUser=user; await afterLogin();} else showAuth(); });
+    $('cloudModeBadge').textContent='✓ Қауіпсіз Google кіруі дайын';
   }catch(e){ console.error(e); cloudEnabled=false; $('cloudModeBadge').textContent='Google аккаунтымен кіру'; toast(window.PREVIEW_MODE?'Firebase қосылмады — алдын ала көру режимі':'Google кіруін қосу параметрлерін тексеріңіз'); }
 }
 
@@ -978,26 +1001,39 @@ async function saveProfile(profile){
 }
 
 $('googleLoginBtn').addEventListener('click',async()=>{
-  if(!cloudEnabled){
-    if(window.PREVIEW_MODE){
-      const email='demo.teacher@gmail.com';
-      const users=state.demoUsers;
-      if(!users[email]) users[email]={name:'Демо мұғалім',email,school:SCHOOL,subject:'',classes:''};
-      state.demoUsers=users;
-      currentUser={email,name:users[email].name,displayName:users[email].name,uid:email};
-      state.session=currentUser;
-      await afterLogin();
-      toast('Алдын ала көру режимі ашылды');
+  const btn=$('googleLoginBtn');
+  const oldHtml=btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML='<span class="google-g" aria-hidden="true">G</span><span>Google ашылуда...</span>';
+  try{
+    await firebaseReadyPromise;
+
+    if(!cloudEnabled || !auth || !firebase){
+      toast('Google кіруі іске қосылмады. Бетті Ctrl+F5 арқылы жаңартып көріңіз.');
       return;
     }
-    toast('Google кіруін іске қосу үшін Firebase конфигурациясын енгізіңіз');
-    return;
-  }
-  try{
+
     const provider=new firebase.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
+
     await firebase.signInWithPopup(auth,provider);
-  }catch(e){ toast(e.message||'Google аккаунтымен кіру мүмкін болмады'); }
+
+  }catch(e){
+    console.error('Google sign-in failed',e);
+
+    if(e?.code==='auth/popup-blocked'){
+      toast('Браузер popup терезесін бұғаттады. Адрес жолағындағы popup рұқсатын қосыңыз.');
+    }else if(e?.code==='auth/popup-closed-by-user'){
+      toast('Google кіру терезесі жабылды.');
+    }else if(e?.code==='auth/unauthorized-domain'){
+      toast('Бұл сайт доменіне Firebase рұқсаты берілмеген.');
+    }else{
+      toast('Google арқылы кіру қатесі: '+(e?.code||e?.message||'белгісіз қате'));
+    }
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=oldHtml;
+  }
 });
 
 async function doLogout(){
@@ -1115,21 +1151,4 @@ function buildLessonTasks(d){
       prompt:`Жұбыңызбен «${d.topic}» бойынша екі маңызды дерек немесе ұғымды салыстырыңыз. Олардың байланысын анықтап, бір ортақ қорытынды жазыңыз.`,
       student:'Жұппен талқылайды, салыстырады және ортақ жауап ұсынады.',
       desc:['екі маңызды деректі анықтайды','олардың байланысын түсіндіреді','ортақ қорытынды ұсынады'],descPoints:[1,1,1],
-      resource:'Оқулық, жұмыс парағы'},
-    {n:3,form:'Топтық жұмыс',method:pick(methods.group,seed,2),minutes:13,points:4,
-      prompt:`Топта «${d.topic}» тақырыбының негізгі идеясын талдаңыз. Үш дәлел немесе мысал таңдап, қысқа постер, сызба немесе ауызша қорғау түрінде ұсыныңыз.`,
-      student:'Топта міндет бөліседі, дәлелдер таңдайды және ортақ жұмысты қорғайды.',
-      desc:['тақырыптың негізгі идеясын анықтайды','үш дәлел немесе мысал келтіреді','топтық қорытындыны түсінікті қорғайды'],descPoints:[1,1,2],
-      resource:'А3 қағазы, маркер',extra:diffText}
-  ];
-}
-
-
-function topicKeywords(topic=''){
-  return topic.replace(/[«»"'.,:;!?()\[\]—–-]/g,' ').split(/\s+/).filter(w=>w.length>3).slice(0,4);
-}
-function subjectTheme(subject=''){
-  const x=subject.toLowerCase();
-  if(/тарих|құқық/.test(x)) return {label:'ТАРИХИ КӨРНЕКІЛІК',a:'#7c2d12',b:'#f59e0b',symbol:'◈'};
-  if(/географ/.test(x)) return {label:'КАРТА ЖӘНЕ КЕҢІСТІК',a:'#075985',b:'#38bdf8',symbol:'◎'};
-  if(/матем|алгеб|геометр/.test(x)) return {label:'СЫЗБА ЖӘНЕ МОДЕЛЬ',a:'#3730a3',b:'#a78bfa'
+      resource:'Оқ
