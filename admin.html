@@ -1,228 +1,188 @@
 <!doctype html>
 <html lang="kk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ҰСТАЗ AI — Әкімші</title>
-  <style>
-    body{margin:0;font-family:Arial,sans-serif;background:#f4f6ff;color:#172033}
-    .wrap{max-width:1100px;margin:0 auto;padding:18px}
-    .card{background:#fff;border:1px solid #dbe1fb;border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    .btn{border:none;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:700}
-    .btn.primary{background:#5b4cf3;color:#fff}
-    .btn.red{background:#fff0f0;color:#d92d20}
-    .btn.green{background:#e8fff3;color:#067647}
-    .btn.light{background:#eef2ff;color:#4f46e5}
-    .hidden{display:none!important}
-    .muted{color:#667085}
-    .item{border:1px solid #e4e7ec;border-radius:16px;padding:14px;margin-top:10px}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ҰСТАЗ AI — Әкімші панелі</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,'Noto Sans',sans-serif;background:#f4f7fb;color:#1f2937}.wrap{max-width:1180px;margin:0 auto;padding:24px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:0 8px 28px rgba(31,41,55,.06)}h1,h2{margin-top:0}.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}.btn:disabled{opacity:.55;cursor:not-allowed}.primary{background:#4f46e5;color:#fff}.soft{background:#eef2ff;color:#3730a3}.danger{background:#fee2e2;color:#991b1b}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.muted{color:#667085}.hidden{display:none!important}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}.waiting{background:#fff7ed;color:#9a3412}.active{background:#dcfce7;color:#166534}.stopped{background:#fee2e2;color:#991b1b}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #eef0f3;vertical-align:middle}th{font-size:13px;color:#667085;background:#f8fafc}td{font-size:14px}.controls{display:flex;gap:8px;flex-wrap:wrap}.info{background:#eef2ff;color:#3730a3;border-radius:14px;padding:12px 14px;margin:12px 0 18px;font-weight:600}.warning{background:#fff7ed;color:#9a3412;border-radius:14px;padding:12px 14px;margin:12px 0 18px;font-weight:600}.code-input{flex:1;min-width:220px;border:1px solid #dbe0ea;border-radius:12px;padding:11px 13px;font:inherit}@media(max-width:700px){.wrap{padding:12px}.card{padding:15px}}
+</style>
+<script src="firebase-config.js"></script>
 </head>
 <body>
 <div class="wrap">
-  <div id="loginBox" class="card">
-    <h1>Әкімші панелі</h1>
-    <p class="muted">Тек иесі ғана кіре алады.</p>
-    <button id="loginBtn" class="btn primary">Google аккаунтымен кіру</button>
+  <div id="codeGate" class="card" style="max-width:520px;margin:48px auto 16px">
+    <h1>Әкімшіге кіру</h1>
+    <p class="muted">Әкімші кодын енгізіңіз.</p>
+    <div class="row" style="align-items:stretch">
+      <input id="adminCode" class="code-input" type="password" autocomplete="off" placeholder="Әкімші коды">
+      <button id="codeLogin" type="button" class="btn primary">Кіру</button>
+    </div>
+    <p id="codeError" style="color:#b42318;margin:10px 0 0;display:none">Код қате. Қайта енгізіңіз.</p>
   </div>
 
-  <div id="deniedBox" class="card hidden">
-    <h2>Қолжетімсіз</h2>
-    <p>Бұл бетке тек иесінің аккаунты кіре алады.</p>
+  <div id="adminAuth" class="card hidden">
+    <h1>ҰСТАЗ AI — рұқсаттарды басқару</h1>
+    <p id="authHelp" class="muted">Код қабылданды. Енді сайт иесінің Google аккаунтымен кіріңіз.</p>
+    <div id="firebaseNotice" class="warning hidden">Firebase әлі қосылмаған. Бұл — алдын ала көру режимі. Нақты сайтта Firebase бапталғаннан кейін Google аккаунты міндетті түрде тексеріледі.</div>
+    <div class="row">
+      <button id="login" type="button" class="btn primary">Google аккаунтымен кіру</button>
+      <button id="logout" type="button" class="btn soft hidden">Шығу</button>
+      <span id="status" class="badge waiting">Google арқылы кіру қажет</span>
+    </div>
   </div>
 
-  <div id="adminBox" class="hidden">
-    <div class="card top">
-      <div>
-        <h2>Рұқсаттарды басқару</h2>
-        <div class="muted" id="adminEmail"></div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="index.html" class="btn light" style="text-decoration:none">Негізгі бет</a>
-        <button id="logoutBtn" class="btn red">Шығу</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Күтіп тұрған сұраныстар</h3>
-      <div id="pendingList">Жүктелуде...</div>
-    </div>
-
-    <div class="card">
-      <h3>Белсенді лицензиялар</h3>
-      <div id="activeList">Жүктелуде...</div>
-    </div>
+  <div id="panel" class="card hidden">
+    <h2>Мұғалімдердің қолжетімділігі</h2>
+    <div class="info">Барлық лицензия: рұқсат берілген күннен бастап автоматты түрде 1 жыл.</div>
+    <div id="list">Жүктелуде...</div>
   </div>
 </div>
 
-<script type="module">
-import {
-  auth, provider, db, OWNER_EMAIL,
-  signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
-  collection, getDocs, doc, setDoc, updateDoc, getDoc, serverTimestamp
-} from "./firebase-config.js";
-
-const $ = (id)=>document.getElementById(id);
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-let adminUser = null;
-
-async function login(){
-  try{
-    if(isMobile) await signInWithRedirect(auth, provider);
-    else await signInWithPopup(auth, provider);
-  }catch(e){
-    console.error(e);
-    alert("Кіру қатесі");
-  }
-}
-
-async function logoutNow(){ await signOut(auth); }
-
-function showLogin(){
-  $("loginBox").classList.remove("hidden");
-  $("deniedBox").classList.add("hidden");
-  $("adminBox").classList.add("hidden");
-}
-function showDenied(){
-  $("loginBox").classList.add("hidden");
-  $("deniedBox").classList.remove("hidden");
-  $("adminBox").classList.add("hidden");
-}
-function showAdmin(user){
-  $("loginBox").classList.add("hidden");
-  $("deniedBox").classList.add("hidden");
-  $("adminBox").classList.remove("hidden");
-  $("adminEmail").textContent = user.email || "";
-}
-
-async function approveUser(uid){
-  const reqSnap = await getDoc(doc(db, "access_requests", uid));
-  if(!reqSnap.exists()) return;
-
-  const req = reqSnap.data();
-  const expires = new Date();
-  expires.setFullYear(expires.getFullYear() + 1);
-
-  await setDoc(doc(db, "licenses", uid), {
-    uid,
-    email: req.email || "",
-    displayName: req.displayName || "",
-    status: "active",
-    activatedAt: serverTimestamp(),
-    expiresAt: expires,
-    approvedBy: OWNER_EMAIL
-  }, { merge:true });
-
-  await updateDoc(doc(db, "access_requests", uid), {
-    status: "active",
-    updatedAt: serverTimestamp()
-  });
-
-  await loadData();
-}
-
-async function revokeUser(uid){
-  await setDoc(doc(db, "licenses", uid), {
-    status: "revoked",
-    updatedAt: serverTimestamp()
-  }, { merge:true });
-
-  const reqRef = doc(db, "access_requests", uid);
-  const reqSnap = await getDoc(reqRef);
-  if(reqSnap.exists()){
-    await updateDoc(reqRef, {
-      status: "revoked",
-      updatedAt: serverTimestamp()
-    });
-  }
-
-  await loadData();
-}
-
-async function loadData(){
-  // pending requests
-  const pendingWrap = $("pendingList");
-  pendingWrap.innerHTML = "";
-
-  const reqSnap = await getDocs(collection(db, "access_requests"));
-  const reqItems = [];
-  reqSnap.forEach(d => reqItems.push(d.data()));
-
-  const pending = reqItems.filter(x => (x.status || "pending") === "pending");
-
-  if(pending.length === 0){
-    pendingWrap.innerHTML = `<div class="muted">Күтіп тұрған мұғалім жоқ.</div>`;
-  }else{
-    pending.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <p><b>Аты:</b> ${item.displayName || "-"}</p>
-        <p><b>Email:</b> ${item.email || "-"}</p>
-        <p><b>UID:</b> ${item.uid || "-"}</p>
-      `;
-      const btn1 = document.createElement("button");
-      btn1.className = "btn green";
-      btn1.textContent = "Рұқсат беру";
-      btn1.onclick = ()=>approveUser(item.uid);
-
-      div.appendChild(btn1);
-      pendingWrap.appendChild(div);
-    });
-  }
-
-  // active licenses
-  const activeWrap = $("activeList");
-  activeWrap.innerHTML = "";
-
-  const licSnap = await getDocs(collection(db, "licenses"));
-  const licenses = [];
-  licSnap.forEach(d => licenses.push(d.data()));
-
-  const active = licenses.filter(x => x.status === "active");
-
-  if(active.length === 0){
-    activeWrap.innerHTML = `<div class="muted">Белсенді лицензия жоқ.</div>`;
-  }else{
-    active.forEach(item => {
-      const exp = item.expiresAt?.toDate ? item.expiresAt.toDate().toLocaleDateString("kk-KZ") : "-";
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <p><b>Email:</b> ${item.email || "-"}</p>
-        <p><b>UID:</b> ${item.uid || "-"}</p>
-        <p><b>Жарамдылық мерзімі:</b> ${exp}</p>
-      `;
-      const btn = document.createElement("button");
-      btn.className = "btn red";
-      btn.textContent = "Өшіру";
-      btn.onclick = ()=>revokeUser(item.uid);
-      div.appendChild(btn);
-      activeWrap.appendChild(div);
-    });
-  }
-}
-
-$("loginBtn").onclick = login;
-$("logoutBtn").onclick = logoutNow;
-
-(async function init(){
-  try{ await getRedirectResult(auth); }catch(e){ console.warn(e); }
-
-  onAuthStateChanged(auth, async(user)=>{
-    adminUser = user;
-    if(!user){ showLogin(); return; }
-
-    if((user.email || "").toLowerCase() !== OWNER_EMAIL.toLowerCase()){
-      showDenied();
-      return;
+<!-- Әкімші коды Firebase-тен тәуелсіз жұмыс істейді -->
+<script>
+(function(){
+  const ADMIN_CODE='saltanat';
+  const gate=document.getElementById('codeGate');
+  const adminAuth=document.getElementById('adminAuth');
+  const codeInput=document.getElementById('adminCode');
+  const codeBtn=document.getElementById('codeLogin');
+  const codeError=document.getElementById('codeError');
+  function unlockAdmin(){
+    if((codeInput.value||'').trim().toLowerCase()===ADMIN_CODE){
+      sessionStorage.setItem('ustaz_ai_admin_gate','1');
+      gate.classList.add('hidden');
+      adminAuth.classList.remove('hidden');
+      codeError.style.display='none';
+      window.dispatchEvent(new Event('ustaz-admin-unlocked'));
+    }else{
+      codeError.style.display='block';
+      codeInput.focus();
+      codeInput.select();
     }
-
-    showAdmin(user);
-    await loadData();
-  });
+  }
+  codeBtn.addEventListener('click',unlockAdmin);
+  codeInput.addEventListener('keydown',function(e){ if(e.key==='Enter') unlockAdmin(); });
+  if(sessionStorage.getItem('ustaz_ai_admin_gate')==='1'){
+    gate.classList.add('hidden');
+    adminAuth.classList.remove('hidden');
+    setTimeout(()=>window.dispatchEvent(new Event('ustaz-admin-unlocked')),0);
+  }
 })();
+</script>
+
+<script type="module">
+const cfg=window.firebaseConfig||{};
+const owner=(window.USTAZ_AI_OWNER_EMAIL||'').toLowerCase();
+const $=id=>document.getElementById(id);
+const configured=cfg.apiKey && cfg.projectId && !Object.values(cfg).some(v=>String(v||'').includes('YOUR_'));
+let auth=null,db=null,F=null;
+
+function fmtDate(value){
+  if(!value)return '—';
+  const d=value?.toDate?value.toDate():new Date(value);
+  return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('kk-KZ');
+}
+function oneYearFromNow(){ const d=new Date(); d.setFullYear(d.getFullYear()+1); return d; }
+
+function demoRows(){
+  const exp=oneYearFromNow();
+  return [
+    {id:'demo1',name:'Айгүл Мұғалім',email:'aigul@example.com',state:'active',expiresAt:exp},
+    {id:'demo2',name:'Гүлнар Мұғалім',email:'gulnar@example.com',state:'waiting',expiresAt:null},
+    {id:'demo3',name:'Мадина Мұғалім',email:'madina@example.com',state:'stopped',expiresAt:null}
+  ];
+}
+function renderRows(rows,demo=false){
+  const root=$('list');
+  root.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Мұғалім</th><th>Google аккаунты</th><th>Күйі</th><th>Мерзімі</th><th>Басқару</th></tr></thead><tbody id="accessRows"></tbody></table></div>`;
+  const tbody=$('accessRows');
+  rows.forEach(x=>{
+    const tr=document.createElement('tr');
+    const active=x.state==='active';
+    const stopped=x.state==='stopped';
+    const statusText=active?'🟢 Белсенді':(stopped?'🔴 Тоқтатылған':'🟡 Күтуде');
+    const statusClass=active?'active':(stopped?'stopped':'waiting');
+    tr.innerHTML=`<td><strong>${x.name||'Мұғалім'}</strong></td><td>${x.email||''}${demo?'<div class="muted" style="font-size:11px;margin-top:3px">Демо жазба</div>':''}</td><td><span class="badge ${statusClass}">${statusText}</span></td><td>${active?fmtDate(x.expiresAt):'—'}</td><td><div class="controls"><button class="btn primary" data-grant>${active?'1 жылға қайта ұзарту':'Рұқсат беру'}</button><button class="btn danger" data-revoke>Тоқтату</button></div></td>`;
+    if(demo){
+      tr.querySelector('[data-grant]').onclick=()=>{x.state='active';x.expiresAt=oneYearFromNow();renderRows(rows,true);};
+      tr.querySelector('[data-revoke]').onclick=()=>{x.state='stopped';x.expiresAt=null;renderRows(rows,true);};
+    }
+    tbody.appendChild(tr);
+  });
+}
+function openDemoAdmin(){
+  $('firebaseNotice').classList.remove('hidden');
+  $('authHelp').textContent='Алдын ала көру режимі: Firebase қосылғанша Google тексеруі орындалмайды.';
+  $('login').textContent='Демо әкімші панелін ашу';
+  $('status').textContent='Алдын ала көру';
+  $('status').className='badge waiting';
+  $('login').onclick=()=>{
+    $('panel').classList.remove('hidden');
+    $('status').textContent='Демо режим';
+    $('status').className='badge active';
+    renderRows(demoRows(),true);
+  };
+}
+
+async function initFirebase(){
+  if(!configured){ openDemoAdmin(); return; }
+  try{
+    const appMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');
+    const authMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js');
+    const fsMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+    const app=appMod.initializeApp(cfg);
+    auth=authMod.getAuth(app); db=fsMod.getFirestore(app); F={...authMod,...fsMod};
+    $('login').onclick=async()=>{
+      try{
+        const provider=new F.GoogleAuthProvider();
+        provider.setCustomParameters({prompt:'select_account'});
+        await F.signInWithPopup(auth,provider);
+      }catch(e){ alert(e.message||'Google аккаунтымен кіру мүмкін болмады'); }
+    };
+    $('logout').onclick=()=>F.signOut(auth);
+    F.onAuthStateChanged(auth,async user=>{
+      if(!user){$('panel').classList.add('hidden');$('logout').classList.add('hidden');$('login').classList.remove('hidden');$('status').textContent='Кіру қажет';$('status').className='badge waiting';return;}
+      $('logout').classList.remove('hidden');$('login').classList.add('hidden');
+      if(!owner||owner==='your_owner_google_email'||(user.email||'').toLowerCase()!==owner){$('status').textContent='Бұл аккаунтқа әкімші рұқсаты жоқ';$('status').className='badge stopped';$('panel').classList.add('hidden');return;}
+      $('status').textContent='Иесі ретінде кірдіңіз';$('status').className='badge active';$('panel').classList.remove('hidden');await loadReal();
+    });
+  }catch(e){ console.error(e); openDemoAdmin(); }
+}
+
+async function loadReal(){
+  const reqSnap=await F.getDocs(F.collection(db,'access_requests'));
+  const root=$('list');
+  if(reqSnap.empty){root.innerHTML='<p class="muted">Әзірге рұқсат сұраған мұғалім жоқ.</p>';return;}
+  const rows=[];
+  for(const d of reqSnap.docs){
+    const x=d.data();
+    const licSnap=await F.getDoc(F.doc(db,'licenses',d.id));
+    const lic=licSnap.exists()?licSnap.data():null;
+    const exp=lic?.expiresAt?.toDate?lic.expiresAt.toDate():(lic?.expiresAt?new Date(lic.expiresAt):null);
+    const active=lic?.active===true && (!exp || exp>new Date());
+    rows.push({id:d.id,name:x.name,email:x.email,state:active?'active':(lic?.active===false?'stopped':'waiting'),expiresAt:active?exp:null,lic});
+  }
+  renderRows(rows,false);
+  const tbody=$('accessRows');
+  [...tbody.children].forEach((tr,i)=>{
+    const x=rows[i];
+    tr.querySelector('[data-grant]').onclick=async()=>{
+      const granted=new Date(),expires=new Date(granted); expires.setFullYear(expires.getFullYear()+1);
+      await F.setDoc(F.doc(db,'licenses',x.id),{active:true,plan:'1 жыл',email:x.email||'',name:x.name||'',grantedAt:F.Timestamp.fromDate(granted),expiresAt:F.Timestamp.fromDate(expires)},{merge:true});
+      alert(`Рұқсат 1 жылға берілді. Аяқталу күні: ${expires.toLocaleDateString('kk-KZ')}`); await loadReal();
+    };
+    tr.querySelector('[data-revoke]').onclick=async()=>{
+      await F.setDoc(F.doc(db,'licenses',x.id),{active:false,plan:'Тоқтатылған'},{merge:true});
+      alert('Рұқсат тоқтатылды'); await loadReal();
+    };
+  });
+}
+
+let started=false;
+function start(){ if(started)return; started=true; initFirebase(); }
+window.addEventListener('ustaz-admin-unlocked',start);
+if(sessionStorage.getItem('ustaz_ai_admin_gate')==='1') start();
 </script>
 </body>
 </html>
