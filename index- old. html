@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- USTAZ AI READY: popup login + DOCX/PDF + 130 QMJ + Gemini image generation -->
 <!-- Google login popup fix for Android: 2026-08-31 -->
 <html lang="kk">
 <head>
@@ -20,29 +21,138 @@ html,body,button,input,textarea,select,h1,h2,h3,h4,h5,h6,p,span,strong,small,lab
 body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 button{touch-action:manipulation;}
 
-/* ҚМЖ — ықшам, екі беттік баспа құрылымы */
-.qmj-page{background:#fff;break-inside:avoid;page-break-inside:avoid}
-.qmj-page+.qmj-page{margin-top:28px;padding-top:22px;border-top:2px dashed #d1d5db}
-.paper .lesson-table{font-size:11px;line-height:1.35}
-.paper .lesson-table th,.paper .lesson-table td{padding:6px}
-.paper .doc-meta{font-size:11.5px;line-height:1.3}
-.paper .doc-meta th,.paper .doc-meta td{padding:5px 7px}
-.paper .descriptor{font-size:10.5px;line-height:1.3}
-.paper .descriptor ol{margin:5px 0 3px;padding-left:18px}
-.paper .descriptor li{margin:2px 0}
-.paper .task-points{margin-top:5px;padding-top:4px;border-top:1px solid #d1d5db}
-.paper .total-row td{background:#f8fafc;text-align:center;font-size:12px}
-.paper .diff-note{margin-top:6px;padding:6px;background:#f8fafc;border-left:3px solid #6366f1;font-size:10px}
+/* ҚМЖ — №130 бұйрық құрылымы, экранда да анық көрінетін 2 бет */
+.qmj-page{
+  background:#fff;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  width:100%;
+}
+.qmj-page+.qmj-page{
+  margin-top:30px;
+  padding-top:0;
+  border-top:0;
+}
+.paper .doc-head h2{
+  margin:0 0 5px;
+  font-size:19px;
+}
+.paper .doc-head p{
+  margin:0 0 7px;
+  font-size:12px;
+}
+.paper .doc-meta,
+.paper .lesson-table{
+  width:100%;
+  border-collapse:collapse!important;
+  border-spacing:0!important;
+  table-layout:fixed;
+  color:#000;
+}
+.paper .doc-meta{
+  font-size:11.5px;
+  line-height:1.25;
+}
+.paper .lesson-table{
+  font-size:10.7px;
+  line-height:1.25;
+}
+.paper .doc-meta th,
+.paper .doc-meta td,
+.paper .lesson-table th,
+.paper .lesson-table td{
+  border:1.35px solid #000!important;
+  padding:5px 6px!important;
+  vertical-align:top;
+  background:#fff;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.paper .doc-meta th,
+.paper .lesson-table th{
+  font-weight:700;
+  background:#f4f4f4!important;
+  text-align:left;
+}
+.paper .lesson-table thead th{
+  text-align:center;
+  vertical-align:middle;
+}
+.paper .lesson-table col.stage{width:14%}
+.paper .lesson-table col.teacher{width:31%}
+.paper .lesson-table col.student{width:20%}
+.paper .lesson-table col.assess{width:20%}
+.paper .lesson-table col.resources{width:15%}
+.paper .lesson-title{
+  text-align:center;
+  margin:8px 0 5px;
+  font-size:14px;
+}
+.paper .descriptor{
+  font-size:10px;
+  line-height:1.22;
+}
+.paper .descriptor ol{
+  margin:4px 0 2px;
+  padding-left:17px;
+}
+.paper .descriptor li{margin:1px 0}
+.paper .task-points{
+  margin-top:4px;
+  padding-top:3px;
+  border-top:1px solid #aaa;
+}
+.paper .total-row td{
+  background:#f8fafc;
+  text-align:center;
+  font-size:11px;
+}
+.paper .diff-note{
+  margin-top:5px;
+  padding:5px;
+  background:#f8fafc;
+  border-left:3px solid #6366f1;
+  font-size:9.5px;
+}
 .paper .date-line{letter-spacing:1px}
+.qmj-page-2{padding-top:0!important}
 
 @media print{
-  @page{size:A4 portrait;margin:9mm}
-  .paper{font-family:Arial,"DejaVu Sans",sans-serif!important}
-  .qmj-page{page-break-after:always;break-after:page;margin:0!important;padding:0!important;border:0!important}
-  .qmj-page:last-child{page-break-after:auto;break-after:auto}
-  .paper .lesson-table{font-size:9.5pt}
-  .paper .doc-meta{font-size:9.5pt}
-  .paper .descriptor{font-size:8.7pt}
+  @page{size:A4 portrait;margin:8mm}
+  .paper{
+    font-family:Arial,"DejaVu Sans",sans-serif!important;
+    box-shadow:none!important;
+    margin:0!important;
+    padding:0!important;
+    width:100%!important;
+    max-width:none!important;
+    overflow:visible!important;
+  }
+  .qmj-page{
+    page-break-after:always;
+    break-after:page;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+  }
+  .qmj-page:last-child{
+    page-break-after:auto;
+    break-after:auto;
+  }
+  .paper .doc-head h2{font-size:14pt!important;margin:0 0 3pt!important}
+  .paper .doc-head p{font-size:9pt!important;margin:0 0 4pt!important}
+  .paper .doc-meta{font-size:8.8pt!important;line-height:1.15!important}
+  .paper .lesson-table{font-size:8.2pt!important;line-height:1.14!important}
+  .paper .doc-meta th,.paper .doc-meta td,
+  .paper .lesson-table th,.paper .lesson-table td{
+    border:1pt solid #000!important;
+    padding:3.2pt 3.8pt!important;
+  }
+  .paper .lesson-title{font-size:10pt!important;margin:4pt 0 3pt!important}
+  .paper .descriptor{font-size:7.6pt!important;line-height:1.12!important}
+  .paper .descriptor ol{margin:2pt 0!important;padding-left:13pt!important}
+  .paper .task-points{margin-top:2pt!important;padding-top:2pt!important}
+  .paper .diff-note{font-size:7.2pt!important;margin-top:2pt!important;padding:2pt!important}
 }
 
 /* 2026-08-31 жаңарту: тапсырма экспорты, 1 бет A4 жұмыс парағы, көрнекіліктер */
@@ -99,9 +209,17 @@ button{touch-action:manipulation;}
 .access-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
 .license-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#fff7ed;color:#9a3412;font-weight:700;font-size:13px}
 
+
+.export-pdf-root .qmj-page+.qmj-page{margin-top:0!important;padding-top:0!important;border:0!important}
+.export-pdf-root .lesson-table,.export-pdf-root .doc-meta{border-collapse:collapse!important;table-layout:fixed!important}
+.export-pdf-root .lesson-table th,.export-pdf-root .lesson-table td,
+.export-pdf-root .doc-meta th,.export-pdf-root .doc-meta td{border:1.2px solid #000!important}
+
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
 </head>
 <body>
   <div class="bg-orb orb-1"></div>
@@ -415,10 +533,10 @@ button{touch-action:manipulation;}
               <label class="span-2">Қосымша нұсқаулық<textarea id="imageExtra" rows="3" placeholder="Мысалы: жазуы қазақша болсын, элементтері ірі, тақтаға ілуге ыңғайлы..."></textarea></label>
             </div>
             <div class="generate-row"><button class="btn primary" type="submit">Сурет жасау</button><button class="btn soft" type="button" id="imagePromptCopyBtn" disabled>Промтты көшіру</button></div>
-            <p style="font-size:11px;color:#667085;margin-bottom:0">Алдын ала көру режимінде сайт тақырыпқа сай demo-визуал жасайды. Нақты AI image API қосылғанда осы форма сол промтпен шынайы сурет генерациясына жіберіледі.</p>
+            <p style="font-size:11px;color:#667085;margin-bottom:0">Нақты AI сурет генераторы: тақырыпқа, пәнге, сыныпқа және таңдаған стильге сәйкес жаңа сурет жасайды.</p>
           </form>
           <div class="glass image-preview-card">
-            <h3>Алдын ала нәтиже</h3>
+            <h3>AI нәтижесі</h3>
             <div id="imagePreviewBox" class="image-preview-box"><div class="image-placeholder">Пән, сынып және тақырыпты енгізіп, <b>«Сурет жасау»</b> батырмасын басыңыз.</div></div>
             <div class="image-actions">
               <button class="btn small soft" id="imagePngBtn" type="button" disabled>PNG жүктеу</button>
@@ -465,7 +583,7 @@ const DEMO_KEY = 'ustaz_ai_demo';
 const $ = (id) => document.getElementById(id);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
-let auth = null, db = null, firebase = null;
+let auth = null, db = null, firebase = null, aiImageModel = null, appCheckReady = false;
 let cloudEnabled = !Object.values(firebaseConfig).some(v => String(v).includes('YOUR_'));
 let currentUser = null;
 let currentProfile = null;
@@ -504,12 +622,41 @@ async function initFirebase(){
     return;
   }
   try{
-    const appMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');
-    const authMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js');
-    const fsMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+    const appMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js');
+    const authMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js');
+    const fsMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js');
+    const aiMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-ai.js');
+    const appCheckMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js');
     const app=appMod.initializeApp(firebaseConfig);
     auth=authMod.getAuth(app); db=fsMod.getFirestore(app);
-    firebase={...authMod,...fsMod};
+    firebase={...authMod,...fsMod,...aiMod,...appCheckMod};
+
+    try{
+      const appCheckKey=String(window.USTAZ_AI_APPCHECK_SITE_KEY||'').trim();
+      if(appCheckKey){
+        appCheckMod.initializeAppCheck(app,{
+          provider:new appCheckMod.ReCaptchaEnterpriseProvider(appCheckKey),
+          isTokenAutoRefreshEnabled:true
+        });
+        appCheckReady=true;
+      }
+    }catch(appCheckErr){
+      console.warn('App Check init failed',appCheckErr);
+      appCheckReady=false;
+    }
+
+    try{
+      const ai=aiMod.getAI(app,{backend:new aiMod.GoogleAIBackend()});
+      aiImageModel=aiMod.getGenerativeModel(ai,{
+        model:'gemini-3.1-flash-image',
+        generationConfig:{
+          responseModalities:[aiMod.ResponseModality.TEXT,aiMod.ResponseModality.IMAGE]
+        }
+      });
+    }catch(aiErr){
+      console.warn('AI image model init failed',aiErr);
+      aiImageModel=null;
+    }
     authMod.onAuthStateChanged(auth, async user=>{ if(user){currentUser=user; await afterLogin();} else showAuth(); });
   }catch(e){ console.error(e); cloudEnabled=false; $('cloudModeBadge').textContent='Google аккаунтымен кіру'; toast(window.PREVIEW_MODE?'Firebase қосылмады — алдын ала көру режимі':'Google кіруін қосу параметрлерін тексеріңіз'); }
 }
@@ -798,37 +945,92 @@ function buildVisualsHTML(d){
   return `<h2>Тақырыптық көрнекіліктер</h2><p style="text-align:center">${esc(d.subject)} • ${esc(d.className)} • ${esc(d.topic)}</p><div class="visual-grid">${cards.map((c,i)=>`<div class="visual-card"><img alt="${esc(c.t)}" src="${svgData(c.t,c.s,d.subject,i,style)}"><div class="visual-caption"><strong>${i+1}-көрнекілік. ${esc(c.t)}</strong>${esc(c.s)}</div></div>`).join('')}</div>`;
 }
 function printElement(el,title='Баспа'){
-  const w=window.open('','_blank'); if(!w){toast('Браузер жаңа терезені бұғаттады');return;}
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>@page{size:A4 portrait;margin:10mm}body{font-family:Arial,sans-serif;margin:0;color:#111}.paper{width:100%}.visual-grid{display:grid;grid-template-columns:1fr 1fr;gap:8mm}.visual-card{border:1px solid #aaa;border-radius:10px;overflow:hidden;break-inside:avoid}.visual-card img{width:100%;display:block}.visual-caption{padding:8px;font-size:10pt}.task-output{font-size:11pt}.task-section{border:1px solid #bbb;padding:10px;margin:8px 0}</style></head><body>${el.innerHTML}</body></html>`); w.document.close(); setTimeout(()=>w.print(),300);
+  const w=window.open('','_blank');
+  if(!w){toast('Браузер жаңа терезені бұғаттады');return;}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+  @page{size:A4 portrait;margin:8mm}
+  body{font-family:Arial,"DejaVu Sans",sans-serif;margin:0;color:#111;background:#fff;font-size:9pt}
+  h1,h2,h3{text-align:center;margin:5px 0}
+  table{width:100%;border-collapse:collapse!important;table-layout:fixed}
+  th,td{border:1px solid #000!important;padding:3.5px 4px;vertical-align:top;overflow-wrap:anywhere}
+  th{background:#f2f2f2}
+  .doc-meta{font-size:8.8pt}.lesson-table{font-size:8.2pt;line-height:1.13}
+  .lesson-table thead th{text-align:center;vertical-align:middle}
+  .lesson-table col.stage{width:14%}.lesson-table col.teacher{width:31%}.lesson-table col.student{width:20%}.lesson-table col.assess{width:20%}.lesson-table col.resources{width:15%}
+  .lesson-title{font-size:10pt;margin:4px 0 3px}.descriptor{font-size:7.6pt}.descriptor ol{margin:2px 0;padding-left:13px}
+  .task-points{margin-top:2px;border-top:1px solid #999;padding-top:2px}
+  .qmj-page{page-break-after:always;break-after:page}.qmj-page:last-child{page-break-after:auto;break-after:auto}.qmj-page+.qmj-page{margin:0!important;padding:0!important;border:0!important}
+  .paper{width:100%;margin:0;padding:0;box-shadow:none}
+  .worksheet{width:100%;padding:0}.worksheet .task-box{border:1px solid #000;padding:5px;margin:4px 0}.worksheet .answer-lines{height:20px;border-bottom:1px dashed #777}
+  .worksheet .ws-visual{display:flex;gap:8px;align-items:center;border:1px solid #000;padding:5px}.worksheet .ws-visual img{width:90px;height:65px;object-fit:cover}
+  img{max-width:100%;height:auto}
+  .visual-grid{display:grid;grid-template-columns:1fr 1fr;gap:8mm}.visual-card{border:1px solid #aaa;border-radius:10px;overflow:hidden;break-inside:avoid}.visual-card img{width:100%;display:block}.visual-caption{padding:8px;font-size:10pt}
+  .task-output{font-size:11pt}.task-section{border:1px solid #bbb;padding:10px;margin:8px 0}
+  </style></head><body>${el.innerHTML}</body></html>`);
+  w.document.close();
+  setTimeout(()=>{try{w.focus();w.print();}catch(e){console.error(e);}},500);
 }
 
 function buildPlanHTML(d){
   const tasks=buildLessonTasks(d);
+  const quoteRow=(d.quote && d.quote!=='—')?`<tr><th colspan="2">Апта дәйексөзі</th><td colspan="4">${esc(d.quote)}</td></tr>`:'';
+  const lessonCols=`<colgroup>
+    <col class="stage"><col class="teacher"><col class="student"><col class="assess"><col class="resources">
+  </colgroup>`;
+  const lessonHead=`<thead><tr>
+    <th>Сабақтың кезеңі/<br>уақыт</th>
+    <th>Педагогтің әрекеті</th>
+    <th>Оқушының әрекеті</th>
+    <th>Бағалау</th>
+    <th>Ресурстар</th>
+  </tr></thead>`;
+
   const page1=`<section class="qmj-page">
-    <div class="doc-head"><h2>Қысқа мерзімді жоспар</h2><p style="text-align:center"><strong>${esc(d.school)}</strong></p></div>
+    <div class="doc-head">
+      <p style="text-align:center"><strong>${esc(d.school)}</strong></p>
+      <h2>Қысқа мерзімді (сабақ) жоспары</h2>
+    </div>
+
     <table class="doc-meta">
-      <tr><th>Бөлім</th><td>${esc(d.section)}</td></tr>
-      <tr><th>Педагогтің аты-жөні</th><td>${esc(d.teacher)}</td></tr>
-      <tr><th>Күні</th><td><span class="date-line">________________________</span></td></tr>
-      <tr><th>Сынып</th><td>${esc(d.className)} &nbsp;&nbsp; Қатысқандар: ${esc(d.present)} &nbsp;&nbsp; Қатыспағандар: ${esc(d.absent)}</td></tr>
-      <tr><th>Сабақтың тақырыбы</th><td>${esc(d.topic)}</td></tr>
-      <tr><th>Оқу мақсаттары</th><td>${esc(d.obj)}</td></tr>
-      <tr><th>Сабақтың мақсаты</th><td>${esc(d.goal)}</td></tr>
-      <tr><th>Апта дәйексөзі</th><td>${esc(d.quote)}</td></tr>
+      <colgroup><col style="width:16%"><col style="width:17%"><col style="width:18%"><col style="width:15%"><col style="width:20%"><col style="width:14%"></colgroup>
+      <tr><th colspan="2">Бөлім:</th><td colspan="4">${esc(d.section)}</td></tr>
+      <tr><th colspan="2">Педагогтің Т.А.Ә.</th><td colspan="4">${esc(d.teacher)}</td></tr>
+      <tr><th colspan="2">Күні:</th><td colspan="4"><span class="date-line">________________________</span></td></tr>
+      <tr>
+        <th>Сынып:</th><td>${esc(d.className)}</td>
+        <th>Қатысушылар саны:</th><td>${esc(d.present)}</td>
+        <th>Қатыспағандар саны:</th><td>${esc(d.absent)}</td>
+      </tr>
+      <tr><th colspan="2">Сабақтың тақырыбы</th><td colspan="4">${esc(d.topic)}</td></tr>
+      <tr><th colspan="2">Оқу бағдарламасына сәйкес оқыту мақсаттары</th><td colspan="4">${esc(d.obj)}</td></tr>
+      <tr><th colspan="2">Сабақтың мақсаты</th><td colspan="4">${esc(d.goal)}</td></tr>
+      ${quoteRow}
     </table>
-    <h3>Сабақ барысы</h3>
-    <table class="lesson-table"><thead><tr><th>Сабақтың кезеңі / уақыт</th><th>Педагогтің әрекеті</th><th>Оқушының әрекеті</th><th>Бағалау</th><th>Ресурстар</th></tr></thead><tbody>
-      <tr><td>Сабақтың басы<br>5 минут</td><td>Амандасады. Сабақтың тақырыбы мен мақсатын қысқаша таныстырады. Алдыңғы білімді еске түсіретін бір сұрақ қояды.</td><td>Сұраққа жауап береді, сабақ мақсатын түсінеді.</td><td>Ауызша мадақтау</td><td>Тақта, оқулық</td></tr>
+
+    <h3 class="lesson-title">Сабақтың барысы</h3>
+    <table class="lesson-table">${lessonCols}${lessonHead}<tbody>
+      <tr>
+        <td>Сабақтың басы<br>5 минут</td>
+        <td>Амандасады. Сабақтың тақырыбы мен мақсатын таныстырады. Алдыңғы білімді еске түсіруге арналған қысқа сұрақ қояды.</td>
+        <td>Сұраққа жауап береді, сабақтың мақсатын түсінеді.</td>
+        <td>ҚБ: ауызша мадақтау</td>
+        <td>Тақта, оқулық</td>
+      </tr>
       ${taskRow(tasks[0],'Сабақтың ортасы')}
     </tbody></table>
   </section>`;
 
-  const page2=`<section class="qmj-page">
-    <h3>Сабақ барысы — жалғасы</h3>
-    <table class="lesson-table"><thead><tr><th>Сабақтың кезеңі / уақыт</th><th>Педагогтің әрекеті</th><th>Оқушының әрекеті</th><th>Бағалау</th><th>Ресурстар</th></tr></thead><tbody>
+  const page2=`<section class="qmj-page qmj-page-2">
+    <table class="lesson-table">${lessonCols}${lessonHead}<tbody>
       ${taskRow(tasks[1],'Сабақтың ортасы')}
       ${taskRow(tasks[2],'Сабақтың ортасы')}
-      <tr><td>Сабақтың соңы<br>5 минут</td><td>Қысқа рефлексия ұйымдастырады: «Бүгін не білдім? Не қиын болды?»</td><td>1–2 сөйлеммен рефлексия жасайды және өз жұмысын бағалайды.</td><td>Өзін-өзі бағалау</td><td>Дәптер</td></tr>
+      <tr>
+        <td>Сабақтың соңы<br>5 минут</td>
+        <td>Рефлексия ұйымдастырады: «Бүгін не білдім? Не қиын болды? Келесі сабақта нені жақсартамын?»</td>
+        <td>Қысқа рефлексия жасап, өз жұмысын бағалайды.</td>
+        <td>Өзін-өзі бағалау</td>
+        <td>Дәптер</td>
+      </tr>
     </tbody></table>
   </section>`;
   return page1+page2;
@@ -870,10 +1072,131 @@ async function savePlan(){
 $('savePlanBtn').onclick=savePlan;
 $('saveDraftBtn').onclick=()=>{const d=collectPlanData(); storageSet(`${DEMO_KEY}_draft_${currentUser?.email||'anon'}`,JSON.stringify(d));toast('Жоба браузерге сақталды');};
 
-function htmlDoc(content,title){ return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>@page{size:A4 portrait;margin:10mm}body{font-family:Arial,"DejaVu Sans",sans-serif;font-size:10pt}table{width:100%;border-collapse:collapse}td,th{border:1px solid #000;padding:5px;vertical-align:top}th{background:#eee}h1,h2,h3{text-align:center;margin:8px 0}.doc-meta,.lesson-table{font-size:9.5pt}.descriptor{font-size:8.7pt}.descriptor ol{margin:4px 0;padding-left:18px}.qmj-page{page-break-after:always}.qmj-page:last-child{page-break-after:auto}.total-row td{text-align:center;font-weight:bold}.task-points{margin-top:4px;border-top:1px solid #999;padding-top:3px}.worksheet{font-size:9pt}.worksheet .task-box{padding:5px;margin:4px 0;border:1px solid #999}.worksheet .answer-lines{height:20px;border-bottom:1px dashed #999}.worksheet .ws-visual{display:flex;gap:8px;align-items:center;border:1px solid #999;padding:5px}.worksheet .ws-visual img{width:90px;height:65px;object-fit:cover}</style></head><body>${content}</body></html>`; }
-function downloadBlob(name,blob){ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},600); }
-function exportWord(el,title){ const html=htmlDoc(el.innerHTML,title); downloadBlob(`${title}.doc`,new Blob(['\ufeff',html],{type:'application/msword'})); }
-function exportPDF(el,title){ html2pdf().set({margin:8,filename:`${title}.pdf`,pagebreak:{mode:['css','legacy']},image:{type:'jpeg',quality:.98},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save(); }
+function htmlDoc(content,title){
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
+  <style>
+    @page{size:A4 portrait;margin:8mm}
+    body{font-family:Arial,"DejaVu Sans",sans-serif;font-size:9pt;color:#000;margin:0}
+    h1,h2,h3{text-align:center;margin:5px 0}
+    table{width:100%;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed}
+    td,th{border:1px solid #000!important;padding:3.5px 4px;vertical-align:top;overflow-wrap:anywhere}
+    th{background:#f2f2f2;font-weight:700}
+    .doc-meta{font-size:8.8pt;line-height:1.15}
+    .lesson-table{font-size:8.2pt;line-height:1.13}
+    .lesson-table thead th{text-align:center;vertical-align:middle}
+    .lesson-table col.stage{width:14%}
+    .lesson-table col.teacher{width:31%}
+    .lesson-table col.student{width:20%}
+    .lesson-table col.assess{width:20%}
+    .lesson-table col.resources{width:15%}
+    .lesson-title{font-size:10pt;margin:4px 0 3px}
+    .descriptor{font-size:7.6pt;line-height:1.1}
+    .descriptor ol{margin:2px 0;padding-left:13px}
+    .descriptor li{margin:0}
+    .task-points{margin-top:2px;border-top:1px solid #999;padding-top:2px}
+    .diff-note{font-size:7.2pt;margin-top:2px;padding:2px;border-left:2px solid #666}
+    .qmj-page{page-break-after:always;break-after:page}
+    .qmj-page:last-child{page-break-after:auto;break-after:auto}
+    .qmj-page+.qmj-page{margin-top:0!important;padding-top:0!important;border:0!important}
+    .worksheet{font-size:9pt}
+    .worksheet .task-box{padding:5px;margin:4px 0;border:1px solid #000}
+    .worksheet .answer-lines{height:20px;border-bottom:1px dashed #777}
+    .worksheet .ws-visual{display:flex;gap:8px;align-items:center;border:1px solid #000;padding:5px}
+    .worksheet .ws-visual img{width:90px;height:65px;object-fit:cover}
+    img{max-width:100%;height:auto}
+  </style></head><body>${content}</body></html>`;
+}
+
+function safeFileName(name='Құжат'){
+  return String(name).replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,' ').trim().slice(0,120)||'Құжат';
+}
+
+function downloadBlob(name,blob){
+  try{
+    const filename=safeFileName(name);
+    if(window.navigator && typeof window.navigator.msSaveOrOpenBlob==='function'){
+      window.navigator.msSaveOrOpenBlob(blob,filename);
+      return true;
+    }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    a.style.display='none';
+    a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(_e){} a.remove();},1800);
+    return true;
+  }catch(e){
+    console.error('Download error',e);
+    return false;
+  }
+}
+
+function exportWord(el,title){
+  if(!el){toast('Жүктейтін материал табылмады');return;}
+  try{
+    if(!window.htmlDocx || typeof window.htmlDocx.asBlob!=='function'){
+      throw new Error('DOCX кітапханасы жүктелмеді');
+    }
+    const html=htmlDoc(el.innerHTML,title);
+    const blob=window.htmlDocx.asBlob(html);
+    if(typeof window.saveAs==='function'){
+      window.saveAs(blob,`${safeFileName(title)}.docx`);
+    }else if(!downloadBlob(`${safeFileName(title)}.docx`,blob)){
+      throw new Error('download failed');
+    }
+    toast('Word (.docx) файлы жүктелуде');
+  }catch(e){
+    console.error('DOCX export error',e);
+    toast('Word жүктеу қатесі');
+  }
+}
+
+async function waitForImages(root){
+  const images=[...root.querySelectorAll('img')];
+  await Promise.all(images.map(img=>new Promise(resolve=>{
+    if(img.complete){resolve();return;}
+    const done=()=>resolve();
+    img.addEventListener('load',done,{once:true});
+    img.addEventListener('error',done,{once:true});
+    setTimeout(done,3500);
+  })));
+}
+
+async function exportPDF(el,title){
+  if(!el){toast('Жүктейтін материал табылмады');return;}
+  let host=null;
+  try{
+    if(typeof html2pdf!=='function') throw new Error('html2pdf кітапханасы жүктелмеді');
+    host=document.createElement('div');
+    host.className='export-pdf-root';
+    host.style.cssText='position:fixed;left:-10000px;top:0;width:194mm;background:#fff;color:#000;padding:0;margin:0;z-index:-1;';
+    const clone=el.cloneNode(true);
+    clone.style.cssText='width:100%;max-width:none;margin:0;padding:0;box-shadow:none;overflow:visible;background:#fff;';
+    host.appendChild(clone);
+    document.body.appendChild(host);
+    await waitForImages(host);
+
+    await html2pdf().set({
+      margin:[8,8,8,8],
+      filename:`${safeFileName(title)}.pdf`,
+      pagebreak:{mode:['css','legacy']},
+      image:{type:'jpeg',quality:.96},
+      html2canvas:{scale:1.35,useCORS:true,allowTaint:true,backgroundColor:'#ffffff',logging:false,scrollX:0,scrollY:0},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+    }).from(clone).save();
+
+    toast('PDF файлы жүктелді');
+  }catch(e){
+    console.error('PDF export error',e);
+    toast('PDF тікелей жүктелмеді. Баспа терезесі ашылады — «PDF ретінде сақтау» таңдаңыз.');
+    try{printElement(el,title);}catch(_e){}
+  }finally{
+    if(host) setTimeout(()=>host.remove(),500);
+  }
+}
 function exportExcel(d){
   const tasks=buildLessonTasks(d);
   const rows=[
@@ -889,13 +1212,13 @@ function exportExcel(d){
   XLSX.utils.book_append_sheet(wb,ws,'ҚМЖ');
   XLSX.writeFile(wb,`ҚМЖ_${d.subject}_${d.className}.xlsx`);
 }
-$('wordBtn').onclick=()=>currentPlan&&exportWord($('planResult'),`ҚМЖ_${currentPlan.subject}_${currentPlan.className}`);
-$('pdfBtn').onclick=()=>currentPlan&&exportPDF($('planResult'),`ҚМЖ_${currentPlan.subject}_${currentPlan.className}`);
+$('wordBtn').onclick=()=>{if(!currentPlan){toast('Алдымен ҚМЖ жасаңыз');return;}exportWord($('planResult'),`ҚМЖ_${currentPlan.subject}_${currentPlan.className}`);};
+$('pdfBtn').onclick=async()=>{if(!currentPlan){toast('Алдымен ҚМЖ жасаңыз');return;}await exportPDF($('planResult'),`ҚМЖ_${currentPlan.subject}_${currentPlan.className}`);};
 $('excelBtn').onclick=()=>currentPlan&&exportExcel(currentPlan);
-$('printBtn').onclick=()=>window.print();
-$('worksheetWordBtn').onclick=()=>currentWorksheet&&exportWord($('worksheetResult'),`Жұмыс_парағы_${currentWorksheet.data.subject}_${currentWorksheet.data.className}`);
-$('worksheetPdfBtn').onclick=()=>currentWorksheet&&exportPDF($('worksheetResult'),`Жұмыс_парағы_${currentWorksheet.data.subject}_${currentWorksheet.data.className}`);
-$('worksheetPrintBtn').onclick=()=>window.print();
+$('printBtn').onclick=()=>{if(!currentPlan){toast('Алдымен ҚМЖ жасаңыз');return;}printElement($('planResult'),`ҚМЖ_${currentPlan.subject}_${currentPlan.className}`);};
+$('worksheetWordBtn').onclick=()=>{if(!currentWorksheet){toast('Алдымен жұмыс парағын жасаңыз');return;}exportWord($('worksheetResult'),`Жұмыс_парағы_${currentWorksheet.data.subject}_${currentWorksheet.data.className}`);};
+$('worksheetPdfBtn').onclick=async()=>{if(!currentWorksheet){toast('Алдымен жұмыс парағын жасаңыз');return;}await exportPDF($('worksheetResult'),`Жұмыс_парағы_${currentWorksheet.data.subject}_${currentWorksheet.data.className}`);};
+$('worksheetPrintBtn').onclick=()=>{if(!currentWorksheet){toast('Алдымен жұмыс парағын жасаңыз');return;}printElement($('worksheetResult'),`Жұмыс_парағы_${currentWorksheet.data.subject}_${currentWorksheet.data.className}`);};
 
 $('taskForm').addEventListener('submit',e=>{e.preventDefault(); const t=taskPack($('taskTopic').value,$('taskSubject').value,$('taskLevel').value); currentTask={subject:$('taskSubject').value.trim(),className:$('taskClass').value.trim(),topic:$('taskTopic').value.trim(),objective:$('taskObjective').value.trim(),type:$('taskType').value,level:$('taskLevel').value,t}; $('taskResult').innerHTML=`<div class="task-output"><h2>${esc(currentTask.type)} — ${esc(currentTask.topic)}</h2><p><b>Пән:</b> ${esc(currentTask.subject)} &nbsp; <b>Сынып:</b> ${esc(currentTask.className)}</p><p><b>Оқу мақсаты:</b> ${esc(currentTask.objective)}</p><div class="task-section"><strong>Тапсырма</strong><p>${esc(t.prompt)}</p>${formatDescriptors(t.desc)}</div><div class="task-section"><strong>Бағалау</strong><p>Дескриптор бойынша өзін-өзі немесе өзара бағалау.</p></div></div>`; $('taskResult').classList.remove('hidden'); $('taskDownloadToolbar').classList.remove('hidden'); $('taskResult').scrollIntoView({behavior:'smooth'});});
 $('taskWordBtn').onclick=()=>currentTask&&exportWord($('taskResult'),`Тапсырма_${currentTask.subject}_${currentTask.className}`);
@@ -943,40 +1266,134 @@ $('copyPromptBtn').addEventListener('click',async()=>{
 
 
 let currentGeneratedImage=null;
+
 function buildImagePrompt(){
   const subject=$('imageSubject').value.trim(), className=$('imageClass').value.trim(), topic=$('imageTopic').value.trim();
   const type=$('imageType').value, style=$('imageStyle').value, format=$('imageFormat').value, extra=$('imageExtra').value.trim();
-  const formatText={portrait:'A4 тік формат',landscape:'A4 көлденең формат',square:'шаршы формат',169:'16:9 формат'}[format]||'A4 тік формат';
-  return `${className} оқушыларына арналған «${topic}» тақырыбы бойынша ${type.toLowerCase()} жаса. Пән: ${subject}. Стиль: ${style}. ${formatText}. Көрініс сабақ мазмұнын дәл ашсын, негізгі нысандар анық әрі ірі болсын, сыныпта көрсетуге және басып шығаруға жарамды болсын. Егер мәтін қолданылса, қазақ тілінде сауатты әрі қысқа жазылсын.${extra?` Қосымша талаптар: ${extra}.`:''}`;
+  const formatText={portrait:'A4 тік формат',landscape:'A4 көлденең формат',square:'шаршы формат',169:'16:9 көлденең формат'}[format]||'A4 тік формат';
+  return `${className} оқушыларына арналған «${topic}» тақырыбы бойынша ${type.toLowerCase()} жаса. Пән: ${subject}. Стиль: ${style}. ${formatText}. Сурет сабақ мазмұнын нақты ашсын. Негізгі нысандар айқын, ірі және бір-бірінен ажыратылатын болсын. Мұғалім тақтаға көрсетуге немесе A4 қағазға басып шығаруға пайдалана алсын. Артық жазу қоспа. Егер мәтін қажет болса, қазақ тілінде сауатты, қысқа әрі анық жазылсын. Тарихи тақырып болса дәуірге сай киім, сәулет, қару-жарақ және орта қолданылсын. Бастауыш сынып болса жас ерекшелігіне сай жылы әрі түсінікті визуал қолданылсын.${extra?` Қосымша талаптар: ${extra}.`:''}`;
 }
-function makeImageSvgData(){
-  const subject=$('imageSubject').value.trim(), className=$('imageClass').value.trim(), topic=$('imageTopic').value.trim();
-  const type=$('imageType').value, style=$('imageStyle').value, format=$('imageFormat').value;
-  const dims={portrait:[900,1273],landscape:[1273,900],square:[1000,1000],169:[1280,720]}[format]||[900,1273];
-  const [w,h]=dims, th=subjectTheme(subject), cartoon=/Pixar/i.test(style), round=cartoon?42:18;
-  const keys=topicKeywords(topic); const title=esc(topic).slice(0,90); const sub=esc(`${subject} • ${className} • ${type}`).slice(0,100); const keywords=esc((keys.join(' • ')||'Сабаққа арналған тақырыптық визуал').slice(0,100));
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${th.a}"/><stop offset="1" stop-color="${th.b}"/></linearGradient></defs><rect width="${w}" height="${h}" fill="#f8fafc"/><rect x="${w*.05}" y="${h*.04}" width="${w*.90}" height="${h*.92}" rx="${round}" fill="white" stroke="#dbe0ea" stroke-width="4"/><rect x="${w*.05}" y="${h*.04}" width="${w*.90}" height="${h*.19}" rx="${round}" fill="url(#g)"/><circle cx="${w*.22}" cy="${h*.48}" r="${Math.min(w,h)*.10}" fill="${th.b}" opacity=".18"/><circle cx="${w*.78}" cy="${h*.67}" r="${Math.min(w,h)*.14}" fill="${th.a}" opacity=".10"/><path d="M ${w*.18} ${h*.72} C ${w*.34} ${h*.56}, ${w*.47} ${h*.78}, ${w*.60} ${h*.60} S ${w*.80} ${h*.52}, ${w*.84} ${h*.70}" fill="none" stroke="${th.a}" stroke-width="${Math.max(12,w*.014)}" stroke-linecap="round" opacity=".65"/><circle cx="${w*.18}" cy="${h*.72}" r="${Math.max(18,w*.023)}" fill="${th.a}"/><circle cx="${w*.60}" cy="${h*.60}" r="${Math.max(18,w*.023)}" fill="${th.b}"/><circle cx="${w*.84}" cy="${h*.70}" r="${Math.max(18,w*.023)}" fill="${th.a}"/><text x="${w/2}" y="${h*.105}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${Math.max(22,w*.03)}" font-weight="700" fill="white">${esc(type).toUpperCase()}</text><foreignObject x="${w*.12}" y="${h*.135}" width="${w*.76}" height="${h*.12}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:${Math.max(28,w*.042)}px;line-height:1.05;text-align:center;color:white;font-weight:800">${title}</div></foreignObject><text x="${w/2}" y="${h*.42}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${Math.max(60,w*.09)}" font-weight="800" fill="${th.a}">${th.symbol}</text><foreignObject x="${w*.14}" y="${h*.48}" width="${w*.72}" height="${h*.11}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:${Math.max(22,w*.032)}px;line-height:1.25;text-align:center;color:#1f2937;font-weight:700">${keywords}</div></foreignObject><text x="${w/2}" y="${h*.87}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${Math.max(17,w*.021)}" fill="#475467">${sub}</text><text x="${w/2}" y="${h*.92}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${Math.max(16,w*.019)}" fill="#98a2b3">№19 орта мектеп-гимназия</text></svg>`;
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+
+function aiImageErrorMessage(err){
+  const raw=String(err?.message||err||'');
+  if(/billing|blaze|quota|payment/i.test(raw)) return 'AI сурет жасау үшін Firebase жобасында Blaze төлем жоспарын қосу қажет.';
+  if(/app.?check|attestation|recaptcha/i.test(raw)) return 'AI сурет үшін App Check баптау қажет.';
+  if(/permission|403|unauthorized|api.*not.*enabled/i.test(raw)) return 'Firebase AI Logic әлі қосылмаған немесе рұқсат берілмеген.';
+  if(/blocked|safety/i.test(raw)) return 'Бұл сұрау қауіпсіздік сүзгісінен өтті. Промтты өзгертіп көріңіз.';
+  return raw || 'AI сурет жасау кезінде қате шықты.';
 }
-$('imageForm').addEventListener('submit',e=>{
+
+async function generateRealAiImage(){
+  if(!currentUser){toast('Алдымен Google аккаунтымен кіріңіз');return;}
+  if(!$('imageSubject').value.trim()||!$('imageClass').value.trim()||!$('imageTopic').value.trim()){
+    toast('Пән, сынып және тақырыпты толтырыңыз');return;
+  }
+  if(!aiImageModel){
+    $('imagePreviewBox').innerHTML='<div class="image-placeholder"><b>AI генераторы әлі белсендірілмеген.</b><br>Firebase Console → AI Logic бөлімінен Gemini API-ды қосыңыз.</div>';
+    toast('Firebase AI Logic-ты қосу қажет');
+    return;
+  }
+  const prompt=buildImagePrompt();
+  $('imagePreviewBox').innerHTML='<div class="image-placeholder"><b>AI сурет жасалып жатыр...</b><br>Бірнеше секунд күтіңіз.</div>';
+  $('imagePromptBox').textContent=prompt;
+  $('imagePromptBox').classList.remove('hidden');
+
+  try{
+    const result=await aiImageModel.generateContent(prompt);
+    let imagePart=null;
+
+    try{
+      const parts=result?.response?.inlineDataParts?.();
+      if(parts?.[0]?.inlineData) imagePart=parts[0].inlineData;
+    }catch(_e){}
+
+    if(!imagePart){
+      const parts=result?.response?.candidates?.[0]?.content?.parts||[];
+      const p=parts.find(x=>x?.inlineData?.data);
+      if(p) imagePart=p.inlineData;
+    }
+
+    if(!imagePart?.data) throw new Error('AI жауапта сурет қайтармады.');
+
+    const mime=imagePart.mimeType||'image/png';
+    const src=`data:${mime};base64,${imagePart.data}`;
+    currentGeneratedImage={
+      src,
+      prompt,
+      topic:$('imageTopic').value.trim(),
+      format:$('imageFormat').value,
+      mime
+    };
+
+    $('imagePreviewBox').innerHTML=`<img id="generatedImage" alt="AI жасаған тақырыптық сурет" src="${src}">`;
+    ['imagePngBtn','imagePdfBtn','imagePrintBtn','imagePromptCopyBtn'].forEach(id=>$(id).disabled=false);
+    toast('AI сурет дайын');
+  }catch(e){
+    console.error('AI image generation failed',e);
+    const msg=aiImageErrorMessage(e);
+    $('imagePreviewBox').innerHTML=`<div class="image-placeholder" style="color:#b42318"><b>Сурет жасалмады.</b><br>${esc(msg)}</div>`;
+    toast(msg);
+  }
+}
+
+$('imageForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  if(!$('imageSubject').value.trim()||!$('imageClass').value.trim()||!$('imageTopic').value.trim()){toast('Пән, сынып және тақырыпты толтырыңыз');return;}
-  const src=makeImageSvgData(), prompt=buildImagePrompt();
-  currentGeneratedImage={src,prompt,topic:$('imageTopic').value.trim(),format:$('imageFormat').value};
-  $('imagePreviewBox').innerHTML=`<img id="generatedImage" alt="Жасалған тақырыптық сурет" src="${src}">`;
-  $('imagePromptBox').textContent=prompt; $('imagePromptBox').classList.remove('hidden');
-  ['imagePngBtn','imagePdfBtn','imagePrintBtn','imagePromptCopyBtn'].forEach(id=>$(id).disabled=false);
-  toast('Суреттің алдын ала нұсқасы жасалды');
+  await generateRealAiImage();
 });
-$('imagePromptCopyBtn').onclick=async()=>{if(!currentGeneratedImage)return;try{await navigator.clipboard.writeText(currentGeneratedImage.prompt);toast('Промт көшірілді');}catch(e){toast('Промтты көшіру мүмкін болмады');}};
-$('imagePngBtn').onclick=()=>{
-  if(!currentGeneratedImage)return; const img=new Image(); img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0);c.toBlob(blob=>downloadBlob(`Сурет_${currentGeneratedImage.topic}.png`,blob),'image/png');}; img.src=currentGeneratedImage.src;
+
+$('imagePromptCopyBtn').onclick=async()=>{
+  const prompt=currentGeneratedImage?.prompt||buildImagePrompt();
+  try{await navigator.clipboard.writeText(prompt);toast('Промт көшірілді');}
+  catch(e){toast('Промтты көшіру мүмкін болмады');}
 };
-$('imagePdfBtn').onclick=()=>{if(!currentGeneratedImage)return; const wrap=document.createElement('div');wrap.style.background='#fff';wrap.style.padding='8mm';wrap.innerHTML=`<img src="${currentGeneratedImage.src}" style="width:100%;display:block">`; exportPDF(wrap,`Сурет_${currentGeneratedImage.topic}`);};
-$('imagePrintBtn').onclick=()=>{if(!currentGeneratedImage)return; const wrap=document.createElement('div');wrap.innerHTML=`<img src="${currentGeneratedImage.src}" style="width:100%;display:block">`;printElement(wrap,`Сурет_${currentGeneratedImage.topic}`);};
+
+async function downloadImageSource(src,filename){
+  try{
+    let blob=null;
+    if(/^data:|^blob:/.test(src)){
+      blob=await fetch(src).then(r=>r.blob());
+    }else{
+      const r=await fetch(src,{mode:'cors'});
+      if(r.ok) blob=await r.blob();
+    }
+    if(blob && downloadBlob(filename,blob)){toast('Сурет жүктелуде');return;}
+    throw new Error('blob download failed');
+  }catch(e){
+    console.error('Image download error',e);
+    try{
+      const a=document.createElement('a');
+      a.href=src;a.download=safeFileName(filename);a.target='_blank';a.rel='noopener';
+      document.body.appendChild(a);a.click();a.remove();
+      toast('Сурет ашылды/жүктелуде');
+    }catch(_e){toast('Суретті жүктеу қатесі');}
+  }
+}
+
+$('imagePngBtn').onclick=async()=>{
+  if(!currentGeneratedImage){toast('Алдымен сурет жасаңыз');return;}
+  await downloadImageSource(currentGeneratedImage.src,`Сурет_${currentGeneratedImage.topic}.png`);
+};
+$('imagePdfBtn').onclick=async()=>{
+  if(!currentGeneratedImage){toast('Алдымен сурет жасаңыз');return;}
+  const wrap=document.createElement('div');
+  wrap.style.cssText='background:#fff;padding:0;width:100%;';
+  wrap.innerHTML=`<img src="${currentGeneratedImage.src}" style="width:100%;height:auto;display:block">`;
+  await exportPDF(wrap,`Сурет_${currentGeneratedImage.topic}`);
+};
+$('imagePrintBtn').onclick=()=>{
+  if(!currentGeneratedImage){toast('Алдымен сурет жасаңыз');return;}
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`<img src="${currentGeneratedImage.src}" style="width:100%;display:block">`;
+  printElement(wrap,`Сурет_${currentGeneratedImage.topic}`);
+};
 $('planToImageBtn').onclick=()=>{
   if(!currentPlan){toast('Алдымен ҚМЖ жасаңыз');return;}
-  $('imageSubject').value=currentPlan.subject||'';$('imageClass').value=currentPlan.className||'';$('imageTopic').value=currentPlan.topic||'';$('imageStyle').value=currentPlan.worksheetStyle||'Шынайы стиль';go('images');toast('Сабақ деректері сурет жасау бөліміне көшірілді');
+  $('imageSubject').value=currentPlan.subject||'';
+  $('imageClass').value=currentPlan.className||'';
+  $('imageTopic').value=currentPlan.topic||'';
+  $('imageStyle').value=currentPlan.worksheetStyle||'Шынайы стиль';
+  go('images');
+  toast('Сабақ деректері сурет жасау бөліміне көшірілді');
 };
 
 async function loadHistory(){
