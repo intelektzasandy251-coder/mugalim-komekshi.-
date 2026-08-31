@@ -454,28 +454,9 @@ button{touch-action:manipulation;}
     </main>
   </div>
 
-  <script>
-// Firebase Console → Project settings → Your apps → Web app конфигурациясын осы жерге қойыңыз.
-// Бұл файлды толтырғаннан кейін сайт бұлттық аккаунт пен ҚМЖ тарихын қолданады.
-window.firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-</script>
+  <script src="firebase-config.js"></script>
 <script>
-const firebaseConfig = window.firebaseConfig || {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT.firebasestorage.app',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID'
-};
+const firebaseConfig = window.firebaseConfig || {};
 
 const SCHOOL = '№19 орта мектеп-гимназия';
 const AUTHOR = 'Салтанат Қалибекқызы';
