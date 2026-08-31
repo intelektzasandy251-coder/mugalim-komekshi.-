@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- USTAZ AI READY: popup login + DOCX/PDF + 130 QMJ + Gemini image generation -->
+<!-- USTAZ AI FINAL FIX: isolated Google Auth + Firestore + lazy AI -->
 <!-- Google login popup fix for Android: 2026-08-31 -->
 <html lang="kk">
 <head>
@@ -469,7 +469,7 @@ body::before{
         </div>
       </div>
 
-      <div id="cloudModeBadge" class="mode-badge">Қауіпсіз кіру • Google аккаунты</div>
+      <div id="cloudModeBadge" class="mode-badge">Google жүйесі жүктелуде...</div>
 
       <div class="auth-form">
         <p style="margin:0;color:#667085;line-height:1.6">Сайтқа өз Google аккаунтыңыз арқылы кіріңіз. Құпиясөзді бұл сайт сұрамайды және сақтамайды.</p>
@@ -823,7 +823,9 @@ const DEMO_KEY = 'ustaz_ai_demo';
 const $ = (id) => document.getElementById(id);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
-let auth = null, db = null, firebase = null, aiImageModel = null, appCheckReady = false;
+let auth = null, db = null, firebase = null, firebaseApp = null;
+let aiImageModel = null, appCheckReady = false, aiInitPromise = null;
+window.__USTAZ_AUTH_ERROR = null;
 let cloudEnabled = Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId);
 let currentUser = null;
 let currentProfile = null;
@@ -856,56 +858,119 @@ function nameFromEmail(email=''){ return email.split('@')[0].replace(/[._-]+/g,'
 function setSync(text, ok=true){ $('syncStatus').textContent=`● ${text}`; $('syncStatus').style.color=ok?'#15803d':'#b45309'; }
 
 async function initFirebase(){
-  $('cloudModeBadge').textContent = cloudEnabled ? '✓ Қауіпсіз Google кіруі қосылған' : 'Google аккаунтымен кіру';
+  $('cloudModeBadge').textContent='Google жүйесі жүктелуде...';
+
   if(!cloudEnabled){
-    if(window.PREVIEW_MODE){ const s=state.session; if(s){ currentUser=s; await afterLogin(); } }
-    return;
+    $('cloudModeBadge').textContent='Google конфигурациясы табылмады';
+    return false;
   }
+
   try{
-    const appMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js');
-    const authMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js');
-    const fsMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js');
-    const aiMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-ai.js');
-    const appCheckMod=await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js');
-    const app=appMod.initializeApp(firebaseConfig);
-    auth=authMod.getAuth(app);
+    /* МАҢЫЗДЫ:
+       Google login үшін тек App + Auth + Firestore жүктеледі.
+       AI Logic / App Check бұл жерге араласпайды.
+    */
+    const [appMod,authMod,fsMod]=await Promise.all([
+      import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js')
+    ]);
+
+    firebaseApp=appMod.initializeApp(firebaseConfig);
+    auth=authMod.getAuth(firebaseApp);
+    db=fsMod.getFirestore(firebaseApp);
+
     try{
       await authMod.setPersistence(auth,authMod.browserLocalPersistence);
     }catch(persistenceErr){
       console.warn('Auth persistence init failed',persistenceErr);
     }
-    db=fsMod.getFirestore(app);
-    firebase={...authMod,...fsMod,...aiMod,...appCheckMod};
 
-    try{
-      const appCheckKey=String(window.USTAZ_AI_APPCHECK_SITE_KEY||'').trim();
-      if(appCheckKey){
-        appCheckMod.initializeAppCheck(app,{
-          provider:new appCheckMod.ReCaptchaEnterpriseProvider(appCheckKey),
-          isTokenAutoRefreshEnabled:true
-        });
-        appCheckReady=true;
+    firebase={...authMod,...fsMod};
+    window.__USTAZ_AUTH_ERROR=null;
+
+    authMod.onAuthStateChanged(auth,async user=>{
+      if(user){
+        currentUser=user;
+        await afterLogin();
+      }else{
+        showAuth();
       }
-    }catch(appCheckErr){
-      console.warn('App Check init failed',appCheckErr);
-      appCheckReady=false;
-    }
+    });
+
+    $('cloudModeBadge').textContent='✓ Google кіруі дайын';
+
+    /* AI-ды фонда бөлек дайындаймыз.
+       AI қатесі Google кіруге әсер етпейді.
+    */
+    setTimeout(()=>{
+      initAiServices().catch(err=>console.warn('AI background init failed',err));
+    },100);
+
+    return true;
+
+  }catch(e){
+    console.error('Firebase Auth init failed',e);
+    window.__USTAZ_AUTH_ERROR=e;
+    auth=null;
+    db=null;
+    firebase=null;
+    $('cloudModeBadge').textContent='Google жүйесі жүктелмеді';
+    return false;
+  }
+}
+
+async function initAiServices(){
+  if(aiImageModel) return aiImageModel;
+  if(aiInitPromise) return aiInitPromise;
+
+  aiInitPromise=(async()=>{
+    if(!firebaseApp) return null;
 
     try{
-      const ai=aiMod.getAI(app,{backend:new aiMod.GoogleAIBackend()});
+      const [aiMod,appCheckMod]=await Promise.all([
+        import('https://www.gstatic.com/firebasejs/12.18.0/firebase-ai.js'),
+        import('https://www.gstatic.com/firebasejs/12.18.0/firebase-app-check.js')
+      ]);
+
+      if(firebase) Object.assign(firebase,aiMod,appCheckMod);
+
+      try{
+        const appCheckKey=String(window.USTAZ_AI_APPCHECK_SITE_KEY||'').trim();
+        if(appCheckKey){
+          appCheckMod.initializeAppCheck(firebaseApp,{
+            provider:new appCheckMod.ReCaptchaEnterpriseProvider(appCheckKey),
+            isTokenAutoRefreshEnabled:true
+          });
+          appCheckReady=true;
+        }else{
+          appCheckReady=false;
+        }
+      }catch(appCheckErr){
+        console.warn('App Check init failed',appCheckErr);
+        appCheckReady=false;
+      }
+
+      const ai=aiMod.getAI(firebaseApp,{backend:new aiMod.GoogleAIBackend()});
       aiImageModel=aiMod.getGenerativeModel(ai,{
         model:'gemini-3.1-flash-image',
         generationConfig:{
           responseModalities:[aiMod.ResponseModality.TEXT,aiMod.ResponseModality.IMAGE]
         }
       });
+
+      return aiImageModel;
+
     }catch(aiErr){
       console.warn('AI image model init failed',aiErr);
       aiImageModel=null;
+      return null;
+    }finally{
+      aiInitPromise=null;
     }
-    authMod.onAuthStateChanged(auth, async user=>{ if(user){currentUser=user; await afterLogin();} else showAuth(); });
-    $('cloudModeBadge').textContent='✓ Қауіпсіз Google кіруі дайын';
-  }catch(e){ console.error(e); cloudEnabled=false; $('cloudModeBadge').textContent='Google аккаунтымен кіру'; toast(window.PREVIEW_MODE?'Firebase қосылмады — алдын ала көру режимі':'Google кіруін қосу параметрлерін тексеріңіз'); }
+  })();
+
+  return aiInitPromise;
 }
 
 function hideMainViews(){
@@ -1003,32 +1068,55 @@ async function saveProfile(profile){
 $('googleLoginBtn').addEventListener('click',async()=>{
   const btn=$('googleLoginBtn');
   const oldHtml=btn.innerHTML;
+
   btn.disabled=true;
   btn.innerHTML='<span class="google-g" aria-hidden="true">G</span><span>Google ашылуда...</span>';
-  try{
-    await firebaseReadyPromise;
 
-    if(!cloudEnabled || !auth || !firebase){
-      toast('Google кіруі іске қосылмады. Бетті Ctrl+F5 арқылы жаңартып көріңіз.');
+  try{
+    const ready=await firebaseReadyPromise;
+
+    if(!ready || !auth || !firebase){
+      const err=window.__USTAZ_AUTH_ERROR;
+      console.error('Auth is not ready',err);
+      $('cloudModeBadge').textContent='Google жүйесі дайын емес';
+      toast('Google жүйесі жүктелмеді. Бетті жаңартып қайта көріңіз.');
       return;
     }
 
     const provider=new firebase.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
 
-    await firebase.signInWithPopup(auth,provider);
+    try{
+      await firebase.signInWithPopup(auth,provider);
+    }catch(popupErr){
+      console.error('Google popup error',popupErr);
+
+      if(
+        popupErr?.code==='auth/popup-blocked' ||
+        popupErr?.code==='auth/cancelled-popup-request' ||
+        popupErr?.code==='auth/operation-not-supported-in-this-environment'
+      ){
+        $('cloudModeBadge').textContent='Google бетіне бағытталуда...';
+        await firebase.signInWithRedirect(auth,provider);
+        return;
+      }
+
+      throw popupErr;
+    }
 
   }catch(e){
     console.error('Google sign-in failed',e);
 
-    if(e?.code==='auth/popup-blocked'){
-      toast('Браузер popup терезесін бұғаттады. Адрес жолағындағы popup рұқсатын қосыңыз.');
-    }else if(e?.code==='auth/popup-closed-by-user'){
+    if(e?.code==='auth/popup-closed-by-user'){
       toast('Google кіру терезесі жабылды.');
     }else if(e?.code==='auth/unauthorized-domain'){
-      toast('Бұл сайт доменіне Firebase рұқсаты берілмеген.');
+      $('cloudModeBadge').textContent='Доменге рұқсат берілмеген';
+      toast('Firebase Authentication ішінде GitHub Pages доменіне рұқсат беру қажет.');
+    }else if(e?.code==='auth/network-request-failed'){
+      toast('Интернет байланысын тексеріңіз.');
     }else{
-      toast('Google арқылы кіру қатесі: '+(e?.code||e?.message||'белгісіз қате'));
+      const shortCode=e?.code||'кіру қатесі';
+      toast('Google кіру қатесі: '+shortCode);
     }
   }finally{
     btn.disabled=false;
@@ -1130,25 +1218,4 @@ function methodSet(subject=''){
     pair:['«Жұптық диалог» әдісі','«Ойды жалғастыр» әдісі','«Сөздер көпірі» әдісі'],
     group:['«Оқиға картасы» әдісі','«Ортақ мәтін» әдісі','«Галереялық пікір» әдісі']};
   return {
-    individual:['«Үш тірек ой» әдісі','«Ой сүзгісі» әдісі','«Негізгіні тап» әдісі'],
-    pair:['«Ой бөліс» әдісі','«Жұптық сұхбат» әдісі','«Салыстыр да қорыт» әдісі'],
-    group:['«Идеялар картасы» әдісі','«Топтық зертхана» әдісі','«Галерея» әдісі']};
-}
-function buildLessonTasks(d){
-  const seed=hashText(d.topic+d.subject), methods=methodSet(d.subject);
-  const firstPrompt = d.quoteTask && d.quote!=='—'
-    ? `Апта дәйексөзін оқыңыз: «${d.quote}». Оның мағынасын «${d.topic}» тақырыбымен байланыстырып, бір нақты мысал және қысқа қорытынды жазыңыз.`
-    : `«${d.topic}» тақырыбы бойынша берілген материалдан үш негізгі ойды анықтап, қысқаша түсіндіріңіз.`;
-  const diffText=d.diff
-    ? `<div class="diff-note"><b>Саралау:</b> қолдауды қажет ететін оқушыға тірек сөздер беріледі; жоғары деңгейдегі оқушы қосымша дәлел келтіреді.</div>`
-    : '';
-  return [
-    {n:1,form:'Жеке жұмыс',method:pick(methods.individual,seed),minutes:10,points:3,prompt:firstPrompt,
-      student:'Тапсырманы жеке орындайды, негізгі ақпаратты анықтап, қысқа жауап жазады.',
-      desc:['негізгі ақпаратты анықтайды','тақырыппен байланыстырады','қысқа қорытынды жасайды'],descPoints:[1,1,1],
-      resource:'Оқулық, дәптер'},
-    {n:2,form:'Жұптық жұмыс',method:pick(methods.pair,seed,1),minutes:12,points:3,
-      prompt:`Жұбыңызбен «${d.topic}» бойынша екі маңызды дерек немесе ұғымды салыстырыңыз. Олардың байланысын анықтап, бір ортақ қорытынды жазыңыз.`,
-      student:'Жұппен талқылайды, салыстырады және ортақ жауап ұсынады.',
-      desc:['екі маңызды деректі анықтайды','олардың байланысын түсіндіреді','ортақ қорытынды ұсынады'],descPoints:[1,1,1],
-      resource:'Оқ
+    individual:['«Үш тірек ой» әдісі','«Ой сүзгісі»
